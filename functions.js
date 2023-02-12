@@ -8,14 +8,18 @@ function createHome() {
   <div class="container">
   <h1 class="cards-manager">Cards Manager</h1>
   <button class="new-card-btn">Create New Card</button>
+  
+  <section class="cards"></section>
 
 
     
     `;
-  persons.forEach((person) => container.appendChild(createCard(person)));
+
+  let cardsContainer = document.querySelector(".cards");
+  persons.forEach((person) => cardsContainer.appendChild(createCard(person)));
 
   let btnNewCard = document.querySelector(".new-card-btn");
-
+  let updBtn = document.querySelector(".updBtn");
   btnNewCard.addEventListener("click", () => {
     createNewCard();
   });
@@ -27,6 +31,8 @@ function createHome() {
       updateCard(persons[persons.findIndex((p) => p.name == card.trim())]);
     }
   });
+
+  updBtn.addEventListener;
 }
 
 function createNewCard() {
@@ -169,6 +175,11 @@ function createCard(person) {
   p3.classList.add("data");
   p3.textContent = person.date; // asa e proprietatea obiectului
   section.appendChild(p3);
+
+  let updBtn = document.createElement("button");
+  updBtn.classList.add("updBtn");
+  updBtn.textContent = "Update";
+  section.appendChild(updBtn);
 
   return section;
 }

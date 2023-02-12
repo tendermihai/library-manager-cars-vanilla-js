@@ -12,6 +12,12 @@
   color: coral;
 }
 
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-rows: auto;
+}
+
 .card {
   width: 200px;
   height: 150px;
@@ -108,4 +114,11 @@
   width: 80px;
   height: 40px;
   border-radius: 10px;
+}
+
+.updBtn {
+  background-color: rgb(85, 159, 233);
+  color: white;
+  border: none;
+  padding: 10px;
 }
