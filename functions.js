@@ -19,7 +19,7 @@ function createHome() {
   persons.forEach((person) => cardsContainer.appendChild(createCard(person)));
 
   let btnNewCard = document.querySelector(".new-card-btn");
-  let updBtn = document.querySelector(".updBtn");
+
   btnNewCard.addEventListener("click", () => {
     createNewCard();
   });
@@ -31,8 +31,6 @@ function createHome() {
       updateCard(persons[persons.findIndex((p) => p.name == card.trim())]);
     }
   });
-
-  updBtn.addEventListener;
 }
 
 function createNewCard() {
@@ -75,9 +73,10 @@ function createNewCard() {
       date: dateInpt.value,
     };
 
-    // createCard(person);
-    persons.push(person);
-    createHome();
+    if (createErrors().length == 0) {
+      persons.push(person);
+      createHome();
+    }
   });
 
   cancel.addEventListener("click", () => {
@@ -230,4 +229,28 @@ function returnName(arr, name) {
     }
   }
   return newArray;
+}
+
+function createErrors() {
+  let errors = [];
+  let name = document.querySelector(".inptName");
+  let email = document.querySelector(".inptEmail");
+  let date = document.querySelector(".inptDate");
+
+  if (name.value == "") {
+    name.value = "Please enter name";
+
+    errors.push("Please enter name");
+  }
+  if (email.value == "") {
+    email.value = "Please enter email";
+
+    errors.push("Please enter email");
+  }
+  if (date.value == "") {
+    date.value = "Please enter date";
+    errors.push("Please enter date");
+  }
+
+  return errors;
 }
