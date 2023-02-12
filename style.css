@@ -1,0 +1,111 @@
+.new-card-btn {
+  background-color: rgb(85, 159, 233);
+  border: none;
+  color: white;
+  width: 150px;
+  height: 40px;
+  border-radius: 10px;
+  margin-bottom: 50px;
+}
+
+.new-card-btn:hover {
+  color: coral;
+}
+
+.card {
+  width: 200px;
+  height: 150px;
+  border: 1px solid red;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  margin-bottom: 50px;
+  background-color: rgb(233, 62, 62);
+  color: white;
+}
+
+.container input {
+  display: block;
+  padding: 10px;
+  width: 300px;
+  margin-bottom: 10px;
+}
+
+.new-card {
+  background-color: rgb(85, 159, 233);
+  border: none;
+  color: white;
+  width: 150px;
+  height: 40px;
+  border-radius: 10px;
+  margin-top: 50px;
+}
+
+.cancel {
+  background-color: rgb(85, 159, 233);
+  border: none;
+  color: white;
+  width: 80px;
+  height: 40px;
+  border-radius: 10px;
+  margin-top: 10px;
+}
+
+.new-card-btns {
+  display: flex;
+  flex-direction: column;
+}
+
+.card-name {
+  display: flex;
+  flex-direction: row;
+  gap: 50px;
+}
+
+.card-email {
+  display: flex;
+  flex-direction: row;
+  gap: 50px;
+}
+
+.card-date {
+  display: flex;
+  flex-direction: row;
+  gap: 50px;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.update-card {
+  background-color: rgb(85, 159, 233);
+  border: none;
+  color: white;
+  width: 120px;
+  height: 40px;
+  border-radius: 10px;
+  margin-top: 50px;
+  margin-bottom: 10px;
+}
+
+.delete-card {
+  background-color: rgb(85, 159, 233);
+  border: none;
+  color: white;
+  width: 80px;
+  height: 40px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+
+.cancel-update {
+  background-color: rgb(85, 159, 233);
+  border: none;
+  color: white;
+  width: 80px;
+  height: 40px;
+  border-radius: 10px;
+}
