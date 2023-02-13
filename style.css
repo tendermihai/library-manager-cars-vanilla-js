@@ -122,3 +122,16 @@
   border: none;
   padding: 10px;
 }
+
+.delBtn {
+  background-color: rgb(85, 159, 233);
+  color: white;
+  border: none;
+  padding: 10px;
+}
+
+.cardBtns {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}

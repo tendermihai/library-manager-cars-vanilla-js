@@ -19,7 +19,8 @@ function createHome() {
   persons.forEach((person) => cardsContainer.appendChild(createCard(person)));
 
   let btnNewCard = document.querySelector(".new-card-btn");
-
+  let sectionBtns = document.querySelector(".cardBtns");
+  let delBtn = document.querySelector(".delBtn");
   btnNewCard.addEventListener("click", () => {
     createNewCard();
   });
@@ -29,6 +30,14 @@ function createHome() {
     if (obj.classList.contains("updBtn")) {
       let card = obj.textContent;
       updateCard(persons[persons.findIndex((p) => p.name == card.trim())]);
+    }
+    if (obj.classList.contains("delBtn")) {
+      let email = obj.parentNode.parentNode.querySelector(".email").textContent;
+
+      persons = deleteByEmail(persons, email);
+
+      console.log(persons);
+      attachCard(persons);
     }
   });
 }
@@ -187,30 +196,34 @@ function createCard(person) {
   delBtn.textContent = "Delete";
   section.appendChild(delBtn);
 
+  sectionBtns = document.createElement("section");
+  sectionBtns.classList.add("cardBtns");
+
+  sectionBtns.appendChild(updBtn);
+  sectionBtns.appendChild(delBtn);
+  section.appendChild(sectionBtns);
   return section;
 }
 
 //functie care sterge cardurile dupa nume
 
-function deleteByName(arr, name) {
+function deleteByEmail(arr, email) {
   let filter = [];
   for (let i = 0; i < arr.length; i++) {
-    if (arr[i].name !== name) {
+    if (arr[i].email !== email) {
       filter.push(arr[i]);
     }
   }
-
   return filter;
 }
 
 //functie ce primeste ca parametru un array de persoane si ataseaza carduriel
 
 function attachCard(arr) {
-  let container = document.querySelector(".container");
-  container.innerHTML = "";
-  for (let i = 0; i < arr.length; i++) {
-    container.appendChild(createCard(arr[i]));
-  }
+  let cardsContainer = document.querySelector(".cards");
+
+  cardsContainer.innerHTML = "";
+  arr.forEach((person) => cardsContainer.appendChild(createCard(person)));
 }
 
 //functie ce returneaza toate persoanele ce sunt selectate
