@@ -26,7 +26,7 @@ function createHome() {
 
   container.addEventListener("click", (e) => {
     let obj = e.target;
-    if (obj.classList.contains("card")) {
+    if (obj.classList.contains("updBtn")) {
       let card = obj.textContent;
       updateCard(persons[persons.findIndex((p) => p.name == card.trim())]);
     }
@@ -135,8 +135,10 @@ function updateCard(person) {
     person.email = emailInpt.value;
     person.date = dataInpt.value;
 
-    updatePerson(card);
-    createHome();
+    if (createErrorsUpdate().length == 0) {
+      updatePerson(card);
+      createHome();
+    }
   });
 }
 
@@ -179,6 +181,11 @@ function createCard(person) {
   updBtn.classList.add("updBtn");
   updBtn.textContent = "Update";
   section.appendChild(updBtn);
+
+  let delBtn = document.createElement("button");
+  delBtn.classList.add("delBtn");
+  delBtn.textContent = "Delete";
+  section.appendChild(delBtn);
 
   return section;
 }
@@ -236,6 +243,30 @@ function createErrors() {
   let name = document.querySelector(".inptName");
   let email = document.querySelector(".inptEmail");
   let date = document.querySelector(".inptDate");
+
+  if (name.value == "") {
+    name.value = "Please enter name";
+
+    errors.push("Please enter name");
+  }
+  if (email.value == "") {
+    email.value = "Please enter email";
+
+    errors.push("Please enter email");
+  }
+  if (date.value == "") {
+    date.value = "Please enter date";
+    errors.push("Please enter date");
+  }
+
+  return errors;
+}
+
+function createErrorsUpdate() {
+  let errors = [];
+  let name = document.querySelector(".updName");
+  let email = document.querySelector(".updEmail");
+  let date = document.querySelector(".updDate");
 
   if (name.value == "") {
     name.value = "Please enter name";
