@@ -1,19 +1,13 @@
+let isEditing = true;
+
 function createHome() {
   let container = document.querySelector(".container");
 
   container.innerHTML = `
-
-
-
   <div class="container">
   <h1 class="cards-manager">Cards Manager</h1>
-  <button class="new-card-btn">Create New Card</button>
-  
-  <section class="cards"></section>
-
-
-    
-    `;
+  <button class="new-card-btn">Create New Card</button>  
+  <section class="cards"></section>`;
 
   let cardsContainer = document.querySelector(".cards");
   persons.forEach((person) => cardsContainer.appendChild(createCard(person)));
@@ -27,17 +21,37 @@ function createHome() {
 
   container.addEventListener("click", (e) => {
     let obj = e.target;
+
     if (obj.classList.contains("updBtn")) {
       let card = obj.textContent;
       updateCard(persons[persons.findIndex((p) => p.name == card.trim())]);
     }
-    if (obj.classList.contains("delBtn")) {
-      let email = obj.parentNode.parentNode.querySelector(".email").textContent;
 
+    if (obj.classList.contains("delBtn")) {
+      let email =
+        obj.parentNode.parentNode.querySelector(".email")?.textContent;
+      if (!email) {
+        email =
+          obj.parentNode.parentNode.querySelector(".inpt-email").textContent;
+      }
       persons = deleteByEmail(persons, email);
 
       console.log(persons);
       attachCard(persons);
+    }
+
+    if (obj.classList.contains("updBtn")) {
+      if (isEditing) {
+        let email =
+          obj.parentNode.parentNode.querySelector(".email")?.textContent;
+        updateCard(makeEditable(getCardByEmail(email)));
+        isEditing = false;
+      } else {
+        let email =
+          obj.parentNode.parentNode.querySelector(".inpt-email")?.textContent;
+        updateCard(makeNonEditable(getCardByEmail(email)));
+        isEditing = true;
+      }
     }
   });
 }
@@ -96,58 +110,30 @@ function createNewCard() {
 //functie care updateaza cardul cand se face click pe cardul respectiv
 
 function updateCard(person) {
-  let container = document.querySelector(".container");
-  container.innerHTML = `
-  <h1>Update or delete this card</h1>
-  <div class="container">
-      <section class="card-name">
-          <label for="name"><b>Name: </b> </label>
-          <input type="text" name="name" class="updName">
-      </section>
-
-      <section class="card-email">
-          <label for="email"><b>E-mail: </b> </label>
-          <input type="email" name="email" class="updEmail">
-      </section>
-
-      <section class="card-date">
-          <label for="date"><b>Date: </b> </label>
-          <input type="text" name="date" class="updDate">
-      </section>
-
-
-      <section class="new-card-btns">
-          <button class="update-card">Update Card</button>
-          <button class="delete-card">Delete</button>
-          <button class="cancel-update">Cancel</button>
-      </section>
-  </div>
-  `;
-
   let card = document.querySelector(".cards");
-  let nameInpt = document.querySelector(".updName");
-  let emailInpt = document.querySelector(".updEmail");
-  let dataInpt = document.querySelector(".updDate");
+  let nameInpt = document.querySelector(".name");
+  let emailInpt = document.querySelector(".email");
+  let dataInpt = document.querySelector(".data");
 
-  let updBtn = document.querySelector(".update-card");
-  let delBtn = document.querySelector(".delete-card");
-  let cancelUpd = document.querySelector(".cancel-update");
+  let updBtn = document.querySelector(".updBtn");
 
-  cancelUpd.addEventListener("click", () => {
-    createHome();
-  });
-
-  updBtn.addEventListener("click", () => {
-    let person = {};
-
-    person.name = nameInpt.value;
-    person.email = emailInpt.value;
-    person.date = dataInpt.value;
-
-    if (createErrorsUpdate().length == 0) {
-      updatePerson(card);
-      createHome();
+  updBtn.addEventListener("click", (e) => {
+    let obj = e.target;
+    console.log("aici");
+    if (obj.classList.contains(".updBtn")) {
+      makeEditable(getCardByEmail(emailInpt));
     }
+    // let person = {};
+
+    // person.name = nameInpt.value;
+    // person.email = emailInpt.value;
+    // person.date = dataInpt.value;
+
+    // console.log(person);
+    // if (createErrorsUpdate().length == 0) {
+    //   updatePerson(card);
+    //   createHome();
+    // }
   });
 }
 
@@ -297,4 +283,84 @@ function createErrorsUpdate() {
   }
 
   return errors;
+}
+
+function getCardByEmail(email) {
+  let cards = document.querySelector(".cards").children;
+  for (let i = 0; i < cards.length; i++) {
+    let em = cards[i].querySelector(".email")?.textContent;
+    if (!em) {
+      em = cards[i].querySelector(".inpt-email")?.textContent;
+    }
+    if (em === email) {
+      return cards[i];
+    }
+  }
+
+  return null;
+}
+
+function makeEditable(card) {
+  let nameInpt = card.querySelector(".name");
+  let emailInpt = card.querySelector(".email");
+  let dataInpt = card.querySelector(".data");
+
+  let div = document.createElement("div");
+  div.classList.add("input-container");
+
+  let newName = document.createElement("input");
+  newName.setAttribute("type", "text");
+  newName.classList.add("inpt-name");
+  newName.value = nameInpt.textContent;
+  div.appendChild(newName);
+
+  let newEmail = document.createElement("input");
+  newEmail.setAttribute("type", "email");
+  newEmail.classList.add("inpt-email");
+  newEmail.value = emailInpt.textContent;
+  div.appendChild(newEmail);
+
+  let newDate = document.createElement("input");
+  newDate.setAttribute("type", "date");
+  newDate.classList.add("inpt-date");
+
+  const date = new Date(dataInpt.textContent).toISOString().substring(0, 10);
+  newDate.value = date;
+  div.appendChild(newDate);
+
+  card.removeChild(nameInpt);
+  card.removeChild(emailInpt);
+  card.removeChild(dataInpt);
+
+  card.appendChild(div);
+
+  card.style.flexDirection = "column-reverse";
+}
+
+function makeNonEditable(card) {
+  let nameInpt = card.querySelector(".inpt-name");
+  let emailInpt = card.querySelector(".inpt-email");
+  let dataInpt = card.querySelector(".inpt-date");
+  let div = card.querySelector(".input-container");
+
+  let newDate = document.createElement("p");
+  newDate.classList.add("data");
+  newDate.innerText = dataInpt.value;
+  card.appendChild(newDate);
+
+  let newEmail = document.createElement("p");
+  newEmail.classList.add("email");
+  newEmail.innerText = emailInpt.value;
+  card.appendChild(newEmail);
+
+  let newName = document.createElement("p");
+  newName.classList.add("name");
+  newName.innerText = nameInpt.value;
+  card.appendChild(newName);
+
+  div.removeChild(nameInpt);
+  div.removeChild(emailInpt);
+  div.removeChild(dataInpt);
+
+  card.removeChild(div);
 }
