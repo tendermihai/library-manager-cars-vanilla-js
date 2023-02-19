@@ -22,11 +22,6 @@ function createHome() {
   container.addEventListener("click", (e) => {
     let obj = e.target;
 
-    if (obj.classList.contains("updBtn")) {
-      let card = obj.textContent;
-      updateCard(persons[persons.findIndex((p) => p.name == card.trim())]);
-    }
-
     if (obj.classList.contains("delBtn")) {
       let email =
         obj.parentNode.parentNode.querySelector(".email")?.textContent;
@@ -41,16 +36,12 @@ function createHome() {
     }
 
     if (obj.classList.contains("updBtn")) {
-      if (isEditing) {
-        let email =
-          obj.parentNode.parentNode.querySelector(".email")?.textContent;
-        updateCard(makeEditable(getCardByEmail(email)));
-        isEditing = false;
+      let email = obj.parentNode.parentNode.querySelector(".email").textContent;
+      console.log(email);
+      if (obj.classList.contains("save")) {
+        makeNonEditable(getCardByEmail(email));
       } else {
-        let email =
-          obj.parentNode.parentNode.querySelector(".inpt-email")?.textContent;
-        updateCard(makeNonEditable(getCardByEmail(email)));
-        isEditing = true;
+        makeEditable(getCardByEmail(email));
       }
     }
   });
@@ -73,7 +64,7 @@ function createNewCard() {
 
         <section class="card-date">
             <label for="date"><b>Date: </b> </label>
-            <input type="text" name="date" class="inptDate">
+            <input type="date" name="date" class="inptDate">
         </section>
 
 
@@ -107,52 +98,6 @@ function createNewCard() {
   });
 }
 
-//functie care updateaza cardul cand se face click pe cardul respectiv
-
-function updateCard(person) {
-  let card = document.querySelector(".cards");
-  let nameInpt = document.querySelector(".name");
-  let emailInpt = document.querySelector(".email");
-  let dataInpt = document.querySelector(".data");
-
-  let updBtn = document.querySelector(".updBtn");
-
-  updBtn.addEventListener("click", (e) => {
-    let obj = e.target;
-    console.log("aici");
-    if (obj.classList.contains(".updBtn")) {
-      makeEditable(getCardByEmail(emailInpt));
-    }
-    // let person = {};
-
-    // person.name = nameInpt.value;
-    // person.email = emailInpt.value;
-    // person.date = dataInpt.value;
-
-    // console.log(person);
-    // if (createErrorsUpdate().length == 0) {
-    //   updatePerson(card);
-    //   createHome();
-    // }
-  });
-}
-
-function updatePerson(cards) {
-  let card = document.querySelector(".cards");
-
-  let nameInput = document.querySelector('input[name="name"]');
-  let emailInput = document.querySelector('input[name="email"]');
-  let dateInput = document.querySelector('input[name="date"]');
-
-  let name = nameInput.value;
-  let email = emailInput.value;
-  let date = dateInput.value;
-
-  // card.querySelector(".card-name").textContent = name;
-  // card.querySelector(".card-email").textContent = email;
-  // card.querySelector(".card-date").textContent = date;
-}
-
 function createCard(person) {
   let section = document.createElement("section");
   section.classList.add("card");
@@ -169,7 +114,7 @@ function createCard(person) {
 
   let p3 = document.createElement("p");
   p3.classList.add("data");
-  p3.textContent = person.date; // asa e proprietatea obiectului
+  p3.textContent = person.date;
   section.appendChild(p3);
 
   let updBtn = document.createElement("button");
@@ -288,10 +233,7 @@ function createErrorsUpdate() {
 function getCardByEmail(email) {
   let cards = document.querySelector(".cards").children;
   for (let i = 0; i < cards.length; i++) {
-    let em = cards[i].querySelector(".email")?.textContent;
-    if (!em) {
-      em = cards[i].querySelector(".inpt-email")?.textContent;
-    }
+    let em = cards[i].querySelector(".email").textContent;
     if (em === email) {
       return cards[i];
     }
@@ -301,66 +243,65 @@ function getCardByEmail(email) {
 }
 
 function makeEditable(card) {
-  let nameInpt = card.querySelector(".name");
-  let emailInpt = card.querySelector(".email");
-  let dataInpt = card.querySelector(".data");
+  let nameInpt = card.querySelector(".name").textContent;
+  let emailInpt = card.querySelector(".email").textContent;
+  let dataInpt = card.querySelector(".data").textContent;
 
-  let div = document.createElement("div");
-  div.classList.add("input-container");
+  card.innerHTML = `
 
-  let newName = document.createElement("input");
-  newName.setAttribute("type", "text");
-  newName.classList.add("inpt-name");
-  newName.value = nameInpt.textContent;
-  div.appendChild(newName);
-
-  let newEmail = document.createElement("input");
-  newEmail.setAttribute("type", "email");
-  newEmail.classList.add("inpt-email");
-  newEmail.value = emailInpt.textContent;
-  div.appendChild(newEmail);
-
-  let newDate = document.createElement("input");
-  newDate.setAttribute("type", "date");
-  newDate.classList.add("inpt-date");
-
-  const date = new Date(dataInpt.textContent).toISOString().substring(0, 10);
-  newDate.value = date;
-  div.appendChild(newDate);
-
-  card.removeChild(nameInpt);
-  card.removeChild(emailInpt);
-  card.removeChild(dataInpt);
-
-  card.appendChild(div);
+  <section class="card" style="flex-direction: column-reverse;">
+  <section class="cardBtns">
+  <button class="updBtn save">save</button>
+  <button class="delBtn">Delete</button></section>
+  <div class="input-container">
+  <input type="text" class="inpt-name" value=${nameInpt}>
+  <input type="email" class="inpt-email email" disabled="" value="${emailInpt}">
+  <input type="date" class="inpt-date" value="${dataInpt}"></div></section >
+  
+  
+  `;
 
   card.style.flexDirection = "column-reverse";
 }
 
 function makeNonEditable(card) {
-  let nameInpt = card.querySelector(".inpt-name");
-  let emailInpt = card.querySelector(".inpt-email");
-  let dataInpt = card.querySelector(".inpt-date");
-  let div = card.querySelector(".input-container");
+  let nameInpt = card.querySelector(".inpt-name").value;
+  let emailInpt = card.querySelector(".inpt-email").value;
+  let dataInpt = card.querySelector(".inpt-date").value;
+  let div = card.querySelector(".input-container").value;
 
-  let newDate = document.createElement("p");
-  newDate.classList.add("data");
-  newDate.innerText = dataInpt.value;
-  card.appendChild(newDate);
+  let btnUpdate = card.querySelector(".updBtn");
 
-  let newEmail = document.createElement("p");
-  newEmail.classList.add("email");
-  newEmail.innerText = emailInpt.value;
-  card.appendChild(newEmail);
+  btnUpdate.classList.remove("save");
 
-  let newName = document.createElement("p");
-  newName.classList.add("name");
-  newName.innerText = nameInpt.value;
-  card.appendChild(newName);
+  let pers = {
+    name: nameInpt,
+    email: emailInpt,
+    date: dataInpt,
+  };
 
-  div.removeChild(nameInpt);
-  div.removeChild(emailInpt);
-  div.removeChild(dataInpt);
+  card.innerHTML = `
+  <p class="name">${nameInpt}</p>
+  <p class="email">${emailInpt}</p>
+  <p class="data">${dataInpt}</p>
+  <section class="cardBtns">
+  <button class="updBtn">Update</button>
+  <button class="delBtn">Delete</button>
+  </section>
+  
+  `;
 
-  card.removeChild(div);
+  update(persons, pers);
+  card.style.flexDirection = "column";
+}
+
+//functie ce prieste ca parametru un vector si o persoana   si schimba valorile persoanei din vector
+
+function update(arr, persoana) {
+  for (let i = 0; i < arr.length; i++) {
+    if (arr[i].email == persoana.email) {
+      arr[i].name = persoana.name;
+      arr[i].date = persoana.date;
+    }
+  }
 }
