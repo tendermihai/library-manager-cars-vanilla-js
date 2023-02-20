@@ -158,3 +158,12 @@
 .cardBtns {
   margin-top: 10px;
 }
+
+.errors {
+  color: red;
+  font-size: 18px;
+}
+
+.hidden {
+  display: none;
+}

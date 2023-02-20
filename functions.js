@@ -35,13 +35,25 @@ function createHome() {
       attachCard(persons);
     }
 
-    if (obj.classList.contains("updBtn")) {
+    if (obj.classList.contains("updBtn") && obj.parentNode.parentNode) {
       let email = obj.parentNode.parentNode.querySelector(".email").textContent;
-      console.log(email);
-      if (obj.classList.contains("save")) {
-        makeNonEditable(getCardByEmail(email));
-      } else {
-        makeEditable(getCardByEmail(email));
+      console.log(obj.parentNode.parentNode);
+
+      let card = getCardByEmail(email);
+
+      if (obj.classList.contains("save") && card) {
+        if (createErrorsUpdate().length > 0) {
+          return;
+        } else {
+          makeNonEditable(card);
+          isEditing = true;
+        }
+      } else if (card && isEditing) {
+        makeEditable(card);
+        isEditing = false;
+      } else if (card && !isEditing) {
+        makeNonEditable(card);
+        isEditing = true;
       }
     }
   });
@@ -51,7 +63,12 @@ function createNewCard() {
   let container = document.querySelector(".container");
   container.innerHTML = `
   <h1>Create a new Card</h1>
+
+  <div class="errors">
+
+  </div>
   <div class="container">
+
         <section class="card-name">
             <label for="name"><b>Name: </b> </label>
             <input type="text" name="name" class="inptName">
@@ -183,24 +200,33 @@ function returnName(arr, name) {
 }
 
 function createErrors() {
+  let containerErrors = document.querySelector(".errors");
+
+  containerErrors.innerHTML = "";
   let errors = [];
   let name = document.querySelector(".inptName");
   let email = document.querySelector(".inptEmail");
   let date = document.querySelector(".inptDate");
 
   if (name.value == "") {
-    name.value = "Please enter name";
+    containerErrors.appendChild(createParagraph("Please enter name."));
 
-    errors.push("Please enter name");
+    errors.push("Please enter name.");
   }
   if (email.value == "") {
-    email.value = "Please enter email";
+    containerErrors.appendChild(createParagraph("Please enter email."));
 
-    errors.push("Please enter email");
+    errors.push("Please enter email.");
   }
   if (date.value == "") {
-    date.value = "Please enter date";
-    errors.push("Please enter date");
+    containerErrors.appendChild(createParagraph("Please enter date."));
+    errors.push("Please enter date.");
+  }
+  if (returnPerson(persons, email.value) !== null) {
+    containerErrors.appendChild(
+      createParagraph("This email is already in use.")
+    );
+    errors.push("This email is already in use.");
   }
 
   return errors;
@@ -208,22 +234,28 @@ function createErrors() {
 
 function createErrorsUpdate() {
   let errors = [];
-  let name = document.querySelector(".updName");
+  let name = document.querySelector(".inpt-name");
   let email = document.querySelector(".updEmail");
-  let date = document.querySelector(".updDate");
+  let date = document.querySelector(".inpt-date");
+  let dateError = document.querySelector(".date-error");
+  dateError.classList.add("hidden");
+  console.log(name.value);
+  console.log(date.value);
 
-  if (name.value == "") {
-    name.value = "Please enter name";
+  if (name && name.value == "") {
+    name.placeholder = "Please enter name";
 
     errors.push("Please enter name");
   }
-  if (email.value == "") {
-    email.value = "Please enter email";
 
-    errors.push("Please enter email");
-  }
-  if (date.value == "") {
-    date.value = "Please enter date";
+  // if (email.value == "") {
+  //   email.placeholder = "Please enter email";
+
+  //   errors.push("Please enter email");
+  // }
+
+  if (date && date.value == "") {
+    dateError.classList.remove("hidden");
     errors.push("Please enter date");
   }
 
@@ -247,29 +279,36 @@ function makeEditable(card) {
   let emailInpt = card.querySelector(".email").textContent;
   let dataInpt = card.querySelector(".data").textContent;
 
+  console.log(nameInpt);
+
   card.innerHTML = `
 
   <section class="card" style="flex-direction: column-reverse;">
   <section class="cardBtns">
   <button class="updBtn save">save</button>
   <button class="delBtn">Delete</button></section>
+  <span class="hidden date-error">Please add a date</span>
   <div class="input-container">
-  <input type="text" class="inpt-name" value=${nameInpt}>
+  
+  <input type="text" class="inpt-name" >
   <input type="email" class="inpt-email email" disabled="" value="${emailInpt}">
   <input type="date" class="inpt-date" value="${dataInpt}"></div></section >
-  
+ 
   
   `;
+
+  let inpt = card.querySelector(".inpt-name");
+
+  inpt.value = nameInpt;
 
   card.style.flexDirection = "column-reverse";
 }
 
 function makeNonEditable(card) {
-  let nameInpt = card.querySelector(".inpt-name").value;
-  let emailInpt = card.querySelector(".inpt-email").value;
-  let dataInpt = card.querySelector(".inpt-date").value;
-  let div = card.querySelector(".input-container").value;
-
+  let nameInpt = card.querySelector(".inpt-name")?.value;
+  let emailInpt = card.querySelector(".inpt-email")?.value;
+  let dataInpt = card.querySelector(".inpt-date")?.value;
+  let div = card.querySelector(".input-container")?.value;
   let btnUpdate = card.querySelector(".updBtn");
 
   btnUpdate.classList.remove("save");
@@ -304,4 +343,23 @@ function update(arr, persoana) {
       arr[i].date = persoana.date;
     }
   }
+}
+
+//functie ce returneaza o persoana dupa email
+
+function returnPerson(arr, email) {
+  for (let i = 0; i < arr.length; i++) {
+    if (arr[i].email == email) {
+      return arr[i];
+    }
+  }
+  return null;
+}
+
+function createParagraph(text) {
+  let p = document.createElement("p");
+
+  p.textContent = text;
+
+  return p;
 }
